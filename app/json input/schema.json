@@ -34,13 +34,13 @@
     "params" : [
         {
             "parameterName" : "fullName", // from RAVEN payload
-            "description" : "Customer full anme", // Description from user
+            "description" : "Customer Full Name", // Description from user
             "mappingSource" : "customer.fullName" // customer demoographic from ReadBankingCustomer.v2  // auto populate
             },
             
             {
             "parameterName" : "payeeName", // from RAVEN payload
-            "description" : "Payee name", // Description from user
+            "description" : "Payee Name", // Description from user
             "mappingSource" : "payload.counterpartyName" // from event payload // auto populate
             },
 

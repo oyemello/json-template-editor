@@ -1,0 +1,81 @@
+{
+  "_id": "0000000",
+  "mappingID": "LO7",
+  "discardDemographic": "false",
+  "isCEdarEnabled": "false",
+  "sourceSystem": "DBP",
+  "sourceEventType": "DBP",
+  "alertType": "ZELLE_OUTGOING_REQUEST_SENT",
+  "templateStatus": "ACTIVE",
+  "destinationSystem": "RAVEN",
+  "destinationTemplateID": "ZELLE_PAYMENT",
+  "templateDescription": "Zelle outgoing request sent template for consumer checking",
+  "communicationType": "TRANSACTION",
+  "isMigrated": "true",
+  "channels": [
+    "EMAIL",
+    "LETTER",
+    "PUSH"
+  ],
+  "recipient.schema": "BANKINGTOKEN",
+  "recipient.recipientId": "accountToken",
+  "userRoles": [
+    "PRIMARY_APPLICANT"
+  ],
+  "category": "REMIDIATION",
+  "communicationTarget": "CUSTOMER",
+  "numberOfApprovals": "0",
+  "params": [
+    {
+      "parameterName": "fullName",
+      "description": "Customer Full Name",
+      "mappingSource": "customer.fullName"
+    },
+    {
+      "parameterName": "payeeName",
+      "description": "Payee Name",
+      "mappingSource": "payload.counterpartyName"
+    },
+    {
+      "parameterName": "transactionAmount",
+      "description": "Payment Sent Amount",
+      "mappingSource": "payload.amount"
+    },
+    {
+      "parameterName": "notificationStatus",
+      "description": "Filter code for Raven",
+      "mappingSource": "constant_request_sent"
+    },
+    {
+      "parameterName": "productName",
+      "description": "Name of the Product",
+      "mappingSource": "constant_CONSUMER_CHECKING_ACCOUNT"
+    },
+    {
+      "parameterName": "",
+      "description": "",
+      "mappingSource": ""
+    },
+    {
+      "parameterName": "",
+      "description": "",
+      "mappingSource": ""
+    }
+  ],
+  "additionalParams": [
+    {
+      "parameterName": "accountNumber",
+      "description": "Account number of the zelle vent triggered",
+      "mappingSource": "accountNumber"
+    }
+  ],
+  "productType": "CONSUMER_CHECKING",
+  "subProductType": "HYSA",
+  "locale": "en_US",
+  "breakOpen": "false",
+  "ravenTemplateId": " XYZ123 ",
+  "enableC360Demographics": "false",
+  "enableEbnc": "false",
+  "sendToRaven": "true",
+  "batchCommunication": "false"
+}
