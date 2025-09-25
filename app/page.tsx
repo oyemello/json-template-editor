@@ -44,7 +44,12 @@ export default function HomePage() {
     <main className="min-h-screen bg-background py-12">
       <div className="container mx-auto">
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold mb-4">JSON Template Editor</h1>
+          <img
+            src="/amex_logo.svg"
+            alt="American Express logo"
+            className="mx-auto mb-6 h-18 w-auto"
+          />
+          <h1 className="text-4xl font-bold mb-4 text-[#006fcf]">Communications Template Mapper</h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             Some steps are missing as they contain sensitive data and are hidden from the user. They will be visible once you export.
           </p>
