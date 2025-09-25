@@ -1,6 +1,6 @@
-# Sequential Form System
+# JSON Template Editor
 
-A schema‑driven, sequential form builder with progressive disclosure, humanized labels, comment‑aware parsing, grouped array editing, hidden‑key control, review + reset flow, and flat JSON export. Built with Next.js, React, TypeScript, Tailwind, shadcn/ui, Zustand, and Framer Motion.
+A schema‑driven, sequential template builder with progressive disclosure, humanized labels, comment‑aware parsing, grouped array editing, hidden‑key control, review + reset flow, and flat JSON export. Built with Next.js, React, TypeScript, Tailwind, shadcn/ui, Zustand, and Framer Motion.
 
 ## Features
 
