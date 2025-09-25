@@ -1,0 +1,81 @@
+{
+    "_id" : "0000000", // DB Primary Key // Not for user
+    "mappingID" : "LO7", // Dymanic value. // Not for user
+    "discardDemographic" : false, // Default // Not for user
+    "isCEdarEnabled" : false, // Default // Not for user 
+    "sourceSystem" : "DBP",  // Default // Not for user
+    "sourceEventType" : "MBP", // Source System // Dropdown // Dropdown Values: P7, DBP, ZELLE, BILL PAY
+    "alertType" : "ZELLE_OUTGOING_REQUEST_SENT", // Derived from payload // Not for user
+    "templateStatus" : "ACTIVE", // Default // Not for user
+    "destinationSystem" : "RAVEN", // Default to RAVEN for now // Not for user
+    "destinationTemplateID" : "ZELLE_PAYMENT", // User Field // Derived from raven payload. eventID
+    "templateDescription" : "Zelle outgoing request sent template for consumer checking", // User input field //
+    "communicationType" : "TRANSACTION", // Dropdown // Dropdown Values: TRANSACTION, ACCOUNT, DEBIT, CCP, SAVINGS
+    
+    "isMigrated" : true, // Ignore // UI should default to true
+    "channels" : [ 
+        "EMAIL",
+        "LETTER",
+        "PUSH"
+    ], // Checkbox // Checkbox Values: EMAIL, LETTER, PUSH
+
+    "recipient" : {
+        "schema" : "BANKINGTOKEN",
+        "recipientId" : "accountToken"
+    }, // User should not be able to change this
+    
+    "userRoles" : [
+        "PRIMARY_APPLICANT" // Checkbox // Checkbox Values: PRIMARY_APPLICANT, SECONDARY_APPLICANT, JOINT_APPLICANT, AUTHORIZED_USER // Optional
+    ],
+
+    "category" : "REMIDIATION", // Dropdown // Dropdown Values: REMIDIATION, ALERT, NOTIFICATION, MARKETING // Only visible if communicationType = CCP
+    "communicationTarget" : "CUSTOMER", // Dropdown // Dropdown Values: CUSTOMER, NON_CUSTOMER // Only visible if communicationType = CCP
+    "numberOfApprovals" : 0, // Not used currently, only used for few adhoc and all broadcast comms.
+    "params" : [
+        {
+            "parameterName" : "fullName", // from RAVEN payload
+            "description" : "Customer full anme", // Description from user
+            "mappingSource" : "customer.fullName" // customer demoographic from ReadBankingCustomer.v2  // auto populate
+            },
+            
+            {
+            "parameterName" : "payeeName", // from RAVEN payload
+            "description" : "Payee name", // Description from user
+            "mappingSource" : "payload.counterpartyName" // from event payload // auto populate
+            },
+
+            {
+            "parameterName" : "transactionAmount", // from RAVEN payload
+            "description" : "Payment Sent Amount", // Description from user
+            "mappingSource" : "payload.amount" // from event payload  // auto populate
+            },
+
+            {
+            "parameterName" : "notificationStatus", // from RAVEN payload
+            "description" : "Filter code for Raven", // Description from user
+            "mappingSource" : "constant_request_sent" // from event payload.event.params.eventStatus / payload.event.params.notificationStatus  // auto populate
+            },
+
+            {
+            "parameterName" : "productName", // from RAVEN payload
+            "description" : "Name of the Product", // Description from user
+            "mappingSource" : "constant_CONSUMER_CHECKING_ACCOUNT" // from RAVEN payload. event.params.productName // auto populate
+            },    // This entire section is user input field. 
+    ],
+    "additionalParams" : [
+            {
+            "parameterName" : "accountNumber", 
+            "description" : "Account number of the zelle vent triggered",
+            "mappingSource" : "accountNumber"
+            }, // This entire section is user input field. 
+    ],
+    "productType" : "CONSUMER_CHECKING", // Dropdown // Dropdown Values: CONSUMER_CHECKING, BUSINESS_CHECKING, CONSUMER_SAVINGS, BUSINESS_SAVINGS
+    "subProductType" : "CONSUMER_CHECKING", // Dropdown // Dropdown Values: BUSINESS_CHECKING, BUSINESS_SAVINGS, HYSA, CD, IRA_HYSA, IRA_CD
+    "locale" : "en_US", // Not visible to the user.
+    "breakOpen" : false, // Not visible to the user.
+    "ravenTemplateId" : " XYZ123 ", // Input field // User will get it from the business requriements.
+    "enableC360Demographics" : false, // Not visible to the user. Default to false
+    "enableEbnc" : false, // Not visible to the user. Default to false
+    "sendToRaven" : true, // Not visible to the user. Default to true
+    "batchCommunication" : false // Dropdown // Dropdown Values: true, false // Default to false
+}
