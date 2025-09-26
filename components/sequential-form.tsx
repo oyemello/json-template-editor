@@ -10,7 +10,7 @@ import { SelectField } from "./select-field"
 import { CheckboxGroup } from "./checkbox-group"
 import { ObjectArrayField } from "./object-array-field"
 import { Button } from "@/components/ui/button"
-import { Progress } from "@/components/ui/progress"
+// Progress removed for simplified review-only view
 import { useToast } from "@/hooks/use-toast"
 import hiddenKeys from "@/lib/hidden-keys"
 import { motion } from "framer-motion"
@@ -36,7 +36,8 @@ interface SequentialFormProps {
 export function SequentialForm({ steps, initialLLMJson, initialValues, leftSlot }: SequentialFormProps) {
   const { toast } = useToast()
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [isReview, setIsReview] = useState(false)
+  // Always start and stay in review mode for this simplified version
+  const [isReview, setIsReview] = useState(true)
 
   const { values, currentStepIndex, errors, setValue, setError, clearError, nextStep, prevStep, setCurrentStep, reset } =
     useFormStore()
@@ -102,8 +103,7 @@ export function SequentialForm({ steps, initialLLMJson, initialValues, leftSlot 
     }
   }, [safeIndex, currentStepIndex, setCurrentStep])
   const currentStep = flowSteps[safeIndex]
-  const isLastStep = currentStepIndex === flowSteps.length - 1
-  const progress = ((currentStepIndex + 1) / flowSteps.length) * 100
+  // Step progress/navigation removed in this version
 
   // Ensure we never stay on a hidden step: auto-skip forward else backward
   useEffect(() => {
@@ -120,66 +120,9 @@ export function SequentialForm({ steps, initialLLMJson, initialValues, leftSlot 
     if (prev >= 0) setCurrentStep(prev)
   }, [currentStep?.id, safeIndex, flowSteps, setCurrentStep])
 
-  const handleNext = () => {
-    if (!currentStep) return
+  // Next/step navigation removed in this version
 
-    // Stricter validation with support for custom select values
-    const getStepError = (step: StepConfig): string | null => {
-      if (step.readOnly || step.component === "object-array" || isHiddenInUI(step.id)) return null
-      const val = values[step.id]
-      // Custom select: allow either a selected option or a non-empty custom value
-      if (step.component === "select" && step.allowCustom) {
-        const custom = (values[`${step.id}__custom`] as string) || ""
-        const hasCustom = custom.trim().length > 0
-        if (hasCustom) return null
-        // Fallback to base validation for selected option
-        return validateField(val as any, "select", step.required)
-      }
-      // Regular select: ensure selection exists and is within options if provided
-      if (step.component === "select") {
-        const err = validateField(val as any, "select", step.required)
-        if (!err && step.options && val) {
-          const found = step.options.includes(val as string)
-          return found ? null : "Please select a valid option"
-        }
-        return err
-      }
-      // Checkbox: require at least one selection when required
-      if (step.component === "checkbox") {
-        return validateField(val as any, "checkbox", step.required)
-      }
-      // Text: non-empty trimmed when required
-      if (step.component === "text") {
-        return validateField(val as any, "text", step.required)
-      }
-      return null
-    }
-
-    const error = getStepError(currentStep)
-
-    if (error) {
-      setError(currentStep.id, error)
-      return
-    }
-
-    clearError(currentStep.id)
-
-    if (isLastStep) {
-      setIsReview(true)
-    } else {
-      // jump to next non-hidden step index
-      let i = safeIndex + 1
-      while (i < flowSteps.length && isHiddenInUI(flowSteps[i].id)) i++
-      setCurrentStep(Math.min(i, flowSteps.length - 1))
-    }
-  }
-
-  const handlePrevClick = () => {
-    if (!currentStep) return
-    let i = safeIndex - 1
-    while (i >= 0 && isHiddenInUI(flowSteps[i].id)) i--
-    setCurrentStep(Math.max(i, 0))
-  }
+  // Previous navigation removed in this version
 
   const handleAddParameterRow = () => {
     if (!currentStep || currentStep.component !== "object-array") return
@@ -464,80 +407,45 @@ export function SequentialForm({ steps, initialLLMJson, initialValues, leftSlot 
 
   return (
     <div className="max-w-2xl mx-auto p-6 space-y-8">
-      {/* Progress indicator */}
-      <div className="space-y-2">
-        <div className="flex justify-between text-sm text-muted-foreground">
-          <span>
-            Step {currentStepIndex + 1} of {flowSteps.length}
-          </span>
-          <span>{Math.round(progress)}% complete</span>
-        </div>
-        <Progress value={progress} className="h-2" />
-      </div>
+      {/* Progress indicator removed */}
 
-      {/* Current step / Review */}
-      <div className="min-h-[200px]">{isReview ? renderReview() : renderCurrentStep()}</div>
-
-      {/* Upload slot only on first step, separated from nav to keep nav centered */}
-      {currentStepIndex === 0 && leftSlot && (
-        <div className="pt-4">{leftSlot}</div>
+      {/* Review-only view */}
+      {leftSlot && (
+        <div className="pt-2">{leftSlot}</div>
       )}
+      <div className="min-h-[200px]">{renderReview()}</div>
 
-      {/* Navigation + Left slot with animation */}
-      {isReview ? (
-        <motion.div
-          key={`nav-review`}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-          className="flex items-center justify-center pt-6 gap-3"
-        >
-          <Button variant="outline" onClick={() => setIsReview(false)} disabled={isSubmitting}>
-            Back
-          </Button>
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button variant="destructive">Reset</Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Reset this form?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  This will clear all data you’ve entered and take you back to the start. This action cannot be undone.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={handleConfirmReset}>Reset</AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-          <Button onClick={handleSubmit} disabled={isSubmitting}>
-            {isSubmitting ? "Submitting..." : "Submit"}
-          </Button>
-        </motion.div>
-      ) : (
-        <motion.div
-          key={`nav-${currentStepIndex}`}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          layout
-          transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-          className="flex items-center justify-center pt-6 gap-3"
-        >
-          <Button variant="outline" onClick={handlePrevClick} disabled={currentStepIndex === 0}>
-            Previous
-          </Button>
-          {currentStep?.component === "object-array" && (
-            <Button variant="outline" onClick={handleAddParameterRow}>
-              Add parameter
-            </Button>
-          )}
-          <Button onClick={handleNext} disabled={isSubmitting}>
-            {isSubmitting ? "Submitting..." : isLastStep ? "Review" : "Next"}
-          </Button>
-        </motion.div>
-      )}
+      {/* Upload slot is shown above for convenience in this version */}
+
+      {/* Review navigation (no Back/Previous) */}
+      <motion.div
+        key={`nav-review`}
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+        className="flex items-center justify-center pt-6 gap-3"
+      >
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button variant="destructive" size="default" className="w-36">Reset</Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Reset this form?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This will clear all data you’ve entered and take you back to the start. This action cannot be undone.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={handleConfirmReset}>Reset</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+        <Button onClick={handleSubmit} disabled={isSubmitting} size="default" className="w-36">
+          {isSubmitting ? "Submitting..." : "Submit"}
+        </Button>
+      </motion.div>
     </div>
   )
 }

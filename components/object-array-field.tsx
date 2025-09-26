@@ -6,6 +6,7 @@ import type { ObjectArrayFieldProps } from "@/types"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { PlusIcon } from 'lucide-react'
 import { humanizeSegment } from "@/lib/humanize"
 import hiddenKeys from "@/lib/hidden-keys"
 
@@ -65,6 +66,16 @@ export function ObjectArrayField({ id, title, helpText, value, onChange, fields,
     updateItems(copy)
   }
 
+  const addRow = () => {
+    const next = items.map((it) => ({ ...it }))
+    const newItem: Item = {}
+    orderedFields.forEach((k) => {
+      if (!isFieldHidden(k)) newItem[k] = ""
+    })
+    next.push(newItem)
+    updateItems(next)
+  }
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 8 }}
@@ -73,9 +84,14 @@ export function ObjectArrayField({ id, title, helpText, value, onChange, fields,
       className="space-y-3"
     >
       <div className="space-y-2">
-        <Label className="text-base font-semibold">
-          {title}
-        </Label>
+        <div className="flex items-center justify-between">
+          <Label className="text-base font-semibold">
+            {title}
+          </Label>
+          <Button type="button" size="icon" variant="outline" onClick={addRow} disabled={readOnly} aria-label="Add">
+            <PlusIcon className="h-4 w-4" />
+          </Button>
+        </div>
         {helpText && <p className="text-sm text-muted-foreground">{helpText}</p>}
       </div>
 
@@ -109,7 +125,7 @@ export function ObjectArrayField({ id, title, helpText, value, onChange, fields,
         ))}
       </div>
 
-      {/* Add button moved to global navigation area */}
+      {/* Inline add (+) button provided in header above */}
     </motion.div>
   )
 }

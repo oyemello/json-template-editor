@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react"
 import { SequentialForm } from "@/components/sequential-form"
-import { Input } from "@/components/ui/input"
 import type { StepConfig } from "@/types"
 import { parseSchemaText } from "@/lib/schema-parser"
 
@@ -27,18 +26,7 @@ export default function HomePage() {
     })()
   }, [])
 
-  const handleFileChange = async (file?: File) => {
-    if (!file) return
-    try {
-      const text = await file.text()
-      const parsed = parseSchemaText(text)
-      setSteps(parsed.steps)
-      setInitialValues(parsed.initialValues)
-      setError(null)
-    } catch (e: any) {
-      setError("Failed to parse uploaded schema: " + String(e?.message || e))
-    }
-  }
+  // Removed file upload (load another schema) in this version
 
   return (
     <main className="min-h-screen bg-background pt-12 pb-24">
@@ -50,7 +38,7 @@ export default function HomePage() {
               alt="American Express logo"
               className="h-10 w-auto self-center"
             />
-            <span aria-hidden className="w-px bg-[#006fcf] mx-1" />
+            <span aria-hidden="true" className="w-px bg-[#006fcf] mx-1" />
             <h1 className="text-2xl font-bold text-[#006fcf] leading-tight text-left">
               <span className="block">Communications</span>
               <span className="block">Template Mapper</span>
@@ -67,20 +55,6 @@ export default function HomePage() {
           <SequentialForm
             steps={steps}
             initialValues={initialValues}
-            leftSlot={
-              <div className="flex items-center gap-3">
-                <label htmlFor="schema-file" className="text-sm text-muted-foreground">
-                  Load another schema (JSON/JSONC):
-                </label>
-                <Input
-                  id="schema-file"
-                  type="file"
-                  accept=".json,.jsonc,.txt,.conf"
-                  onChange={(e) => handleFileChange(e.target.files?.[0] || undefined)}
-                  className="max-w-xs"
-                />
-              </div>
-            }
           />
         ) : (
           <div className="max-w-2xl mx-auto p-6 text-center text-muted-foreground">Loading schema…</div>
